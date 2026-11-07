@@ -39,9 +39,9 @@ let data={heroes:[],equipment:[],talents:[],effects:[],meta:{}}, currentType='he
 let saved=new Set();try{saved=new Set(JSON.parse(localStorage.getItem('yijing-favorites')||'[]'));}catch{}
 let currentLineup=null,currentPhase=2,board=[],selectedCell=null,toastTimer;
 const hero = name => data.heroes.find(h=>h.name===name);
-const cardImage = c => c?.localThumb || c?.thumb || c?.image || './assets/favicon.svg';
-const portrait = c => c?.localImage || c?.image || c?.thumb || './assets/favicon.svg';
-const img = (c,classes='',mode='thumb',attrs='') => `<img class="${classes}" src="${esc(mode==='portrait'?portrait(c):cardImage(c))}" alt="${esc(c?.name||'卡牌')}" loading="lazy" onerror="this.onerror=null;this.src='./assets/favicon.svg'" ${attrs}>`;
+const cardImage = c => c?.thumb || c?.image || c?.localThumb || './assets/favicon.svg';
+const portrait = c => c?.image || c?.thumb || c?.localImage || './assets/favicon.svg';
+const img = (c,classes='',mode='thumb',attrs='') => `<img class="${classes}" src="${esc(mode==='portrait'?portrait(c):cardImage(c))}" alt="${esc(c?.name||'卡牌')}" loading="lazy" onerror="this.onerror=null;this.src=esc(c?.image||c?.thumb||'./assets/favicon.svg')" ${attrs}>`;
 function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),2600);}
 async function copyPublicLink(){
  if(['127.0.0.1','localhost'].includes(location.hostname)){toast('这是本地预览，公开发布后才能分享访问链接');return;}
@@ -120,3 +120,4 @@ async function initialize(){
  }catch(error){console.error(error);$('#lineup-grid').innerHTML='<div class="error-box">攻略资料暂时未能加载。请检查网络后刷新页面。</div>';$('#cards-grid').innerHTML='<div class="error-box">资料加载失败，请刷新重试。</div>';$('#card-result-count').textContent='资料暂不可用';$('#load-more').hidden=true;}
 }
 initialize();
+
