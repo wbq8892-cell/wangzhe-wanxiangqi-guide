@@ -109,4 +109,3 @@ function wireLibraryEvents(){
  $('#reset-lineups').addEventListener('click',resetLineupLibrary);
  $('#load-more-lineups').addEventListener('click',()=>{lineupPage++;renderExpandedLineups();$('#lineups').scrollIntoView({block:'start'});});$('#previous-lineups').addEventListener('click',()=>{lineupPage=Math.max(0,lineupPage-1);renderExpandedLineups();$('#lineups').scrollIntoView({block:'start'});});
 }
-
