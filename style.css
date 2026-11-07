@@ -45,4 +45,7 @@
 .editor-picks-grid b,.editor-picks-grid span,.editor-picks-grid small{display:block}.editor-picks-grid b{font-size:14px}.editor-picks-grid span{margin-top:9px;color:#b27b25;font-size:12px}.editor-picks-grid small{margin-top:9px;color:#6f7d72;font-size:11px;line-height:1.55}
 @media(max-width:900px){.editor-picks-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.editor-picks{padding:16px;margin-top:16px}.editor-picks-heading h3{font-size:20px}.editor-picks-grid{grid-template-columns:1fr}.editor-picks-grid button{min-height:0}}
+/* 国内模型补充回答 */
+.ai-answer-panel{margin-top:16px;padding:16px 18px;border:1px solid rgba(202,145,42,.35);border-radius:16px;background:linear-gradient(135deg,#fff8df,#fffdf6)}
+.ai-answer-head{display:flex;align-items:center;gap:8px;color:#7a541a}.ai-answer-head span{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#d79b32;color:#fff;font-size:12px;font-weight:800}.ai-answer-head small{margin-left:auto;color:#9b8b68;font-size:11px}.ai-answer-panel p{margin:10px 0 0;color:#48564b;line-height:1.75;white-space:pre-wrap}
 
