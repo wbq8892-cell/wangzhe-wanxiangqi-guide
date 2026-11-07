@@ -1,6 +1,7 @@
 'use strict';
 
 let guideKnowledge={articles:[],counters:[]},guideReady=false,inlineGuideAnswer=null;
+const DOMESTIC_AI_ENDPOINT='https://wanxiang-ai-gateway.fragrantwaxwing.chatgpt.site/api/ai';
 const guideHeroAliases={'李信':['光信','李现'],'艾琳':['爱琳'],'太乙真人':['太乙','电饭煲'],'东皇太一':['东皇'],'百里守约':['守约'],'裴擒虎':['老虎'],'孙悟空':['猴子'],'鲁班七号':['小鲁班'],'公孙离':['阿离'],'孙尚香':['香香'],'马可波罗':['马可'],'杨玉环':['玉环']};
 const guideExamples=['打999李信谁比较克制？','李信带机器头怎么打？','白歌适合什么阵容？','整备和开团有什么区别？'];
 const guideQuestionPattern=/[？?]|怎么|如何|怎样|什么|谁|哪个|克制|反制|对付|打不过|打得过|能打过|能不能|能否|能秒|能赢|怕谁|出装|装备推荐|怎么玩|区别|为什么|怎么办|养到|升到|适合/;
@@ -118,10 +119,23 @@ function renderSearchWithGuidance(){
  typeList.filter(type=>['all',type].includes(globalSearchType)).forEach(type=>data[type].filter(c=>termsMatch(cardSearchText(c),terms)).forEach(item=>matches.push({type,item})));
  $('#global-results').innerHTML=matches.length?`<p class="search-match-count">找到 ${matches.length} 项 · 显示前 ${Math.min(36,matches.length)} 项</p>`+matches.slice(0,36).map(({type,item:c})=>`<button class="search-result" ${type==='lineup'?`data-lineup="${c.id}"`:type==='lord'?`data-lord-pick="${esc(c.name)}"`:`data-card="${c.id}" data-type="${type}"`}>${type==='lord'?`<img src="${esc(c.image)}" alt="">`:img(type==='lineup'?hero(c.core):c)}<span><strong>${esc(c.name)}</strong><small>${esc(type==='lineup'?c.system+' · '+c.players.join(' / '):type==='lord'?'查看技能、秘技与适配阵容':short(c.desc,42))}</small></span><span>${type==='lineup'?'阵容攻略':type==='lord'?'棋手专属':typeNames[type]} ↗</span></button>`).join(''):'<p>没有找到匹配项。试试具体名称，或切换“问答”说出你的问题。</p>';
 }
+function domesticAiMarkup(answer){return '<article class="ai-answer-panel"><div class="ai-answer-head"><span>AI</span><b>国内模型补充解读</b><small>基于本站资料上下文</small></div><p>'+esc(answer)+'</p></article>';}
+async function enrichWithDomesticAI(question,host,localAnswer){
+ const context=[localAnswer.title,localAnswer.lead,...(localAnswer.steps||[]).map(s=>s.title+'：'+s.body),...(localAnswer.warnings||[])].join(String.fromCharCode(10)).slice(0,9000);
+ try{
+  const response=await fetch(DOMESTIC_AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question,context})});
+  if(!response.ok)return;
+  const result=await response.json();if(!result.ok||!result.answer)return;
+  const panel=domesticAiMarkup(result.answer);
+  if(host==='global'){$('#global-results').insertAdjacentHTML('beforeend',panel);return;}
+  if(host==='inline'){$('#lineup-guide-answer').insertAdjacentHTML('beforeend',panel);return;}
+  $('#guide-answer').insertAdjacentHTML('beforeend',panel);
+ }catch(error){console.warn('国内 AI 暂不可用',error);}
+}
 function askGuideQuestion(question,host='ask'){
- if(host==='global'){globalSearchType='answer';$('#global-query').value=question;$$('[data-global-type]').forEach(b=>{b.classList.toggle('active',b.dataset.globalType==='answer');b.setAttribute('aria-pressed',String(b.dataset.globalType==='answer'));});renderExpandedSearch();return;}
- if(host==='inline'){$('#lineup-query').value=question;lineupLimit=12;renderExpandedLineups();return;}
- window.navigateTo?.('ask');$('#guide-question').value=question;$('#guide-answer').innerHTML=guideAnswerMarkup(getGuideAnswer(question),'ask');
+ if(host==='global'){globalSearchType='answer';$('#global-query').value=question;$$('[data-global-type]').forEach(b=>{b.classList.toggle('active',b.dataset.globalType==='answer');b.setAttribute('aria-pressed',String(b.dataset.globalType==='answer'));});renderExpandedSearch();enrichWithDomesticAI(question,host,getGuideAnswer(question));return;}
+ if(host==='inline'){$('#lineup-query').value=question;lineupLimit=12;renderExpandedLineups();enrichWithDomesticAI(question,host,getGuideAnswer(question));return;}
+ window.navigateTo?.('ask');$('#guide-question').value=question;const answer=getGuideAnswer(question);$('#guide-answer').innerHTML=guideAnswerMarkup(answer,'ask');enrichWithDomesticAI(question,host,answer);
 }
 function initializeGuideFeatures(knowledge){guideKnowledge=knowledge;guideReady=true;$('#guide-submit').disabled=false;}
 function wireGuideEvents(){
@@ -130,3 +144,4 @@ function wireGuideEvents(){
  $('#guide-question').addEventListener('input',()=>{if(!$('#guide-question').value.trim())$('#guide-answer').innerHTML='';});
  document.addEventListener('click',e=>{const button=e.target.closest('[data-guide-question]');if(button)askGuideQuestion(button.dataset.guideQuestion,button.dataset.guideHost||'ask');});
 }
+
