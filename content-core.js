@@ -57,4 +57,3 @@ export async function readOfficialSources(fetcher=fetch){
  const entries=await Promise.all(Object.entries(CARD_SOURCES).map(async([type,url])=>[type,await get(url)]));
  const feeds=await Promise.all(FEED_SOURCES.map(get));return{...Object.fromEntries(entries),feeds};
 }
-
