@@ -120,4 +120,3 @@ async function initialize(){
  }catch(error){console.error(error);$('#lineup-grid').innerHTML='<div class="error-box">攻略资料暂时未能加载。请检查网络后刷新页面。</div>';$('#cards-grid').innerHTML='<div class="error-box">资料加载失败，请刷新重试。</div>';$('#card-result-count').textContent='资料暂不可用';$('#load-more').hidden=true;}
 }
 initialize();
-
