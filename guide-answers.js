@@ -130,4 +130,3 @@ function wireGuideEvents(){
  $('#guide-question').addEventListener('input',()=>{if(!$('#guide-question').value.trim())$('#guide-answer').innerHTML='';});
  document.addEventListener('click',e=>{const button=e.target.closest('[data-guide-question]');if(button)askGuideQuestion(button.dataset.guideQuestion,button.dataset.guideHost||'ask');});
 }
-
