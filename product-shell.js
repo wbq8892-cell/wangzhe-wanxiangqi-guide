@@ -162,4 +162,3 @@ async function copyCreatorScript(){
  if(!studioLineup)return;const l=studioLineup;const text=[`【标题】${l.name}，先看懂核心再上场`,`【开场】这套构筑适配${l.players.join('、')}，核心是${l.core}。`,`【阵容】${l.heroes.join('、')}`,`【过程】按过渡、成形、对手调整分段讲解；配合本站可移动站位演示。`,`【条件】${l.needsReview?'本期关联改动尚待复核。':''}评分和使用量不是胜率，具体强度取决于等级、装备与对手。`,`【出处】原作者${l.author}；官方攻略中心；资料核验${snapshotLabel()}。`].join('\n');
  try{await navigator.clipboard.writeText(text);toast('原创讲解提纲已复制，录制时补充你的实战判断');}catch{toast('当前环境无法复制，可先导出卡片使用');}
 }
-
