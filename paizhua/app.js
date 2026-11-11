@@ -165,7 +165,7 @@
  function canvasBlob(canvas,quality){return new Promise((resolve,reject)=>{try{canvas.toBlob(b=>b?resolve(b):reject(new Error('照片处理失败')),'image/jpeg',quality)}catch{reject(new Error('照片处理失败'))}})}
  function loadPhoto(file){return new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('照片格式暂不支持，请转为 JPG 或 PNG 后重试'))};img.src=url})}
  async function compressPhoto(file){
-  const img=await loadPhoto(file);if(!img.naturalWidth||!img.naturalHeight||img.naturalWidth*img.naturalHeight>80000000)throw new Error('照片尺寸过大，请选择较小的照片');
+  const img=await loadPhoto(file);if(!img.naturalWidth||!img.naturalHeight)throw new Error('无法读取照片尺寸，请尝试其他照片');
   let scale=Math.min(1,MAX_EDGE/Math.max(img.naturalWidth,img.naturalHeight)),blob;
   for(let round=0;round<5;round++){
    const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
